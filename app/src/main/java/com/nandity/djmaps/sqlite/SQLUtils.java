@@ -50,7 +50,7 @@ public class SQLUtils {
         int id = 0;
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
-        // 根据时间查询数据库id号
+        // 根据时间查询数据库
         Cursor cursor = db.query("mapinfo", null, "plan=?", new String[]{plan + ""},
                 null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
