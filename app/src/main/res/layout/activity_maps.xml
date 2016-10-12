@@ -1,10 +1,11 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    android:orientation="vertical"
+    >
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
@@ -13,32 +14,29 @@
         android:layout_weight="10"
         map:cameraZoom="13"
         tools:context=".activity.MapsActivity" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
-
+        android:layout_weight="1"
+        >
         <EditText
-            android:id="@+id/et_la"
+            android:id="@+id/lon_edt"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="经度" />
-
+            android:layout_height="wrap_content"
+            android:hint="经度"/>
         <EditText
-            android:id="@+id/et_lo"
+            android:id="@+id/lat_edt"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:hint="纬度" />
-
+            android:layout_height="wrap_content"
+            android:hint="纬度"/>
         <Button
-            android:id="@+id/btn_admit"
+            android:id="@+id/sure_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="确认" />
+            android:text="确认"/>
 
     </LinearLayout>
 

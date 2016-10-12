@@ -2,8 +2,10 @@ package com.nandity.djmaps.activity;
 
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -16,25 +18,54 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.nandity.djmaps.R;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
-    private EditText etLa;
-    private EditText etLo;
-    private Button btnAdmit;
     private GoogleMap mMap;
+    private EditText mLonEdt, mLatEdt;
+    private Button mSureBtn;
+    private double mLatitude,mLongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        setViews();
+        mLatEdt = (EditText) findViewById(R.id.lat_edt);
+        mLonEdt = (EditText) findViewById(R.id.lon_edt);
+        mSureBtn = (Button) findViewById(R.id.sure_btn);
+        mSureBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MapsActivity.this,"nihao",Toast.LENGTH_SHORT).show();
+                mLongitude = Double.valueOf(mLonEdt.getText().toString());
+                mLatitude= Double.valueOf(mLatEdt.getText().toString());
+                LatLng MELBOURNE = new LatLng(mLongitude, mLatitude);
+                Marker melbourne = mMap.addMarker(new MarkerOptions()
+                        .position(MELBOURNE)
+                        .draggable(true)
+
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(MELBOURNE));
+                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+                    @Override
+                    public void onMarkerDragStart(Marker marker) {
+
+                    }
+
+                    @Override
+                    public void onMarkerDrag(Marker marker) {
+
+                    }
+
+                    @Override
+                    public void onMarkerDragEnd(Marker marker) {
+
+                    }
+                });
+            }
+        });
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-    }
 
-    private void setViews() {
-        etLa= (EditText) findViewById(R.id.et_la);
-        etLo= (EditText) findViewById(R.id.et_lo);
     }
 
 
@@ -50,29 +81,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
         // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(29.35, 106.33);
+        mLongitude=29.616351;
+        mLatitude=106.516677;
+        LatLng sydney = new LatLng(mLongitude, mLatitude);
+        mLonEdt.setText(mLongitude+"");
+        mLatEdt.setText(mLatitude+"");
+        mMap.setTrafficEnabled(true);
+        mMap.setBuildingsEnabled(true);
+
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        LatLng MELBOURNE = new LatLng(29.616351, 106.516677);
-        Marker melbourne = mMap.addMarker(new MarkerOptions()
-                .position(MELBOURNE)
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
 
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
     }
+
 }
