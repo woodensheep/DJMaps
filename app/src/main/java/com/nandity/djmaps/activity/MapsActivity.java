@@ -40,7 +40,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Marker melbourne = mMap.addMarker(new MarkerOptions()
                         .position(MELBOURNE)
                         .draggable(true)
-
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(MELBOURNE));
                 mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
