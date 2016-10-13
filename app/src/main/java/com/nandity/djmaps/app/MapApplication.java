@@ -12,17 +12,16 @@ import java.util.List;
 public class MapApplication extends Application{
     private static MapApplication instance;
     private List<Activity> activityList = new LinkedList<Activity>();
+    private  int plan=1;
     @Override
     public void onCreate() {
         super.onCreate();
+        instance=this;
         getInstance();
     }
 
     // 单例模式获取唯一的MyApplication实例
     public static MapApplication getInstance() {
-        if (null == instance) {
-            instance = new MapApplication();
-        }
         return instance;
     }
 
@@ -39,5 +38,15 @@ public class MapApplication extends Application{
             activity.finish();
         }
         System.exit(0);
+    }
+
+    public  void addPlan(){
+        //plan++;
+    }
+    public  void removePlan(){
+        //plan--;
+    }
+    public  int getPlanNumber(){
+        return plan;
     }
 }

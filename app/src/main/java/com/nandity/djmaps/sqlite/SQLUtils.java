@@ -13,13 +13,13 @@ public class SQLUtils {
     /**
      * 获取到SQLiteDatabase的实例
      */
-    private static SQLiteDatabase getSQLiteDatabase(Context context) {
+    public static SQLiteDatabase getSQLiteDatabase(Context context) {
         SQLiteOpenHelper dbHelper = new MapSQLiteHelper(context, "dlmaps.db", null, 1);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         return db;
     }
 
-    private static void insertPoint(Context context, int plan, int point, String lo, String la) {
+    public static void insertPoint(Context context, int plan, int point, String lo, String la) {
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
         values.put("plan", plan);
@@ -29,14 +29,14 @@ public class SQLUtils {
         long id = db.insert("mapinfo", null, values);
     }
 
-    private static void deletePoint(Context context, int plan, int point) {
+    public static void deletePoint(Context context, int plan, int point) {
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
         int id =getID(context,plan,point);
         db.delete("mapinfo", "id = ?", new String[]{id+""});
     }
 
-    private static void updatePoint(Context context, int plan, int point, String lo, String la) {
+    public static void updatePoint(Context context, int plan, int point, String lo, String la) {
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
         values.put("lo", lo);
@@ -46,7 +46,7 @@ public class SQLUtils {
     }
 
 
-    private static int getID(Context context, int plan, int point) {
+    public static int getID(Context context, int plan, int point) {
         int id = 0;
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();

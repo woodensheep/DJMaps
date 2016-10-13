@@ -1,7 +1,11 @@
 package com.nandity.djmaps.activity;
 
 import android.Manifest;
+import android.content.ContentValues;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -21,6 +28,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.nandity.djmaps.R;
+import com.nandity.djmaps.app.MapApplication;
+import com.nandity.djmaps.sqlite.SQLUtils;
+import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +41,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button mSureBtn;
     private double mLatitude, mLongitude;
     private List<LatLng> mList;
+    private MapApplication app;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        app = MapApplication.getInstance();
+        app.addPlan();
         mLatEdt = (EditText) findViewById(R.id.lat_edt);
         mLonEdt = (EditText) findViewById(R.id.lon_edt);
         mSureBtn = (Button) findViewById(R.id.sure_btn);
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         initDate();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
         mSureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,48 +68,52 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 double mLongitude1 = Double.valueOf(mLonEdt.getText().toString());
                 double mLatitude1 = Double.valueOf(mLatEdt.getText().toString());
                 LatLng MELBOURNE = new LatLng(mLongitude1, mLatitude1);
+                mList.add(MELBOURNE);
+                SQLUtils.insertPoint(app,app.getPlanNumber(),mList.size(),mLonEdt.getText().toString(),mLatEdt.getText().toString());
                 Marker melbourne = mMap.addMarker(new MarkerOptions()
                         .position(MELBOURNE)
                         .draggable(true)
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(MELBOURNE));
-                PolylineOptions rectOptions = new PolylineOptions();
-
-
-                rectOptions.add(new LatLng(mLongitude1, mLatitude1), new LatLng(mLongitude, mLatitude));
-                mLatitude = mLatitude1;
-                mLongitude = mLongitude1;
-
-// Get back the mutable Polyline
-                Polyline polyline = mMap.addPolyline(rectOptions);
-                mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-                    @Override
-                    public void onMarkerDragStart(Marker marker) {
-
-                    }
-
-                    @Override
-                    public void onMarkerDrag(Marker marker) {
-
-                    }
-
-                    @Override
-                    public void onMarkerDragEnd(Marker marker) {
-
-                    }
-                });
+                setPolyline();
             }
         });
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
 
+
+
+    /**
+     * 画线
+     */
+    private void setPolyline() {
+        PolylineOptions rectOptions = new PolylineOptions();
+        SQLiteDatabase db = SQLUtils.getSQLiteDatabase(app);
+        ContentValues values = new ContentValues();
+        // 根据时间查询数据
+        Cursor cursor = db.query("mapinfo", new String[]{"plan"},"plan" , new String[]{app.getPlanNumber() + ""},
+                null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            int point1 = cursor.getInt(cursor.getColumnIndex("point"));
+            while (cursor != null) {
+                String lo = cursor.getString(cursor.getColumnIndex("lo"));
+                String la = cursor.getString(cursor.getColumnIndex("la"));
+                rectOptions.add(new LatLng(Double.parseDouble(lo), Double.parseDouble(la)));
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        // Get back the mutable Polyline
+        Polyline polyline = mMap.addPolyline(rectOptions);
     }
 
     private void initDate() {
         mList = new ArrayList<LatLng>();
         mList.add(new LatLng(29.616351, 106.516677));
+        SQLUtils.insertPoint(app, app.getPlanNumber(), mList.size(), 29.616351 + "", 106.516677 + "");
 //    mList.add(new LatLng(29.616145, 106.516688));
     }
 
@@ -109,8 +134,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mLongitude = 29.616351;
         mLatitude = 106.516677;
         LatLng sydney = new LatLng(mLongitude, mLatitude);
-        mLonEdt.setText(mList.get(0).longitude+"");
-        mLatEdt.setText(mList.get(0).latitude+"");
+        mLonEdt.setText(mList.get(0).latitude + "");
+        mLatEdt.setText(mList.get(0).longitude + "");
         mMap.setTrafficEnabled(true);
         mMap.setBuildingsEnabled(true);
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
@@ -121,8 +146,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.addMarker(new MarkerOptions().position(mList.get(0)).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(mList.get(0)));
-
-
     }
 
 }
