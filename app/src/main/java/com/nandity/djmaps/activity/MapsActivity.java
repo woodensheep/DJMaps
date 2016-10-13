@@ -94,16 +94,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SQLiteDatabase db = SQLUtils.getSQLiteDatabase(app);
         ContentValues values = new ContentValues();
         // 根据时间查询数据
+        Logger.d("limeng",1+"");
         Cursor cursor = db.query("mapinfo", new String[]{"plan"},"plan" , new String[]{app.getPlanNumber() + ""},
                 null, null, null);
+        Logger.d("limeng",2+"");
         if (cursor != null && cursor.moveToFirst()) {
-            int point1 = cursor.getInt(cursor.getColumnIndex("point"));
-            while (cursor != null) {
+            do {
+                int point1 = cursor.getInt(cursor.getColumnIndex("point"));
                 String lo = cursor.getString(cursor.getColumnIndex("lo"));
                 String la = cursor.getString(cursor.getColumnIndex("la"));
                 rectOptions.add(new LatLng(Double.parseDouble(lo), Double.parseDouble(la)));
-                cursor.moveToNext();
-            }
+            }while (cursor.moveToNext());
             cursor.close();
         }
         // Get back the mutable Polyline
