@@ -105,12 +105,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng MELBOURNE = new LatLng(mLongitude1, mLatitude1);
         Marker melbourne = mMap.addMarker(new MarkerOptions()
                 .position(MELBOURNE)
-                .title(point+":"+lo+","+la)
+                .title("第"+point+"点"+":"+lo+","+la)
                 .draggable(true)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
     }
 
     private void initDate() {
+        mList=new ArrayList<>();
     }
 
     /**
@@ -160,7 +161,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         double mLatitude1 = Double.valueOf(mLatEdt.getText().toString());
                         LatLng MELBOURNE = new LatLng(mLongitude1, mLatitude1);
                         mList.add(MELBOURNE);
-                        SQLUtils.insertPoint(app,app.getPlanNumber(),SQLUtils.getpointNumber(app,1),mLonEdt.getText().toString(),mLatEdt.getText().toString());
+                        SQLUtils.insertPoint(app,app.getPlanNumber(),SQLUtils.getpointNumber(app,1)+1,mLonEdt.getText().toString(),mLatEdt.getText().toString());
                         Marker melbourne = mMap.addMarker(new MarkerOptions()
                                 .position(MELBOURNE)
                                 .draggable(true)
@@ -174,7 +175,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         };
         // dialog参数设置
-        AlertDialog.Builder builder = new AlertDialog.Builder(app); // 先得到构造器
+        AlertDialog.Builder builder = new AlertDialog.Builder(this); // 先得到构造器
         builder.setTitle("提示"); // 设置标题
         builder.setMessage("是否添加坐标?"); // 设置内容
         builder.setIcon(R.mipmap.main_map_pressed);// 设置图标，图片id即可
