@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.google.android.gms.maps.model.LatLng;
+
 /**
  * Created by lemon on 2016/10/12.
  */
@@ -27,6 +29,7 @@ public class SQLUtils {
         values.put("lo", lo);
         values.put("la", la);
         long id = db.insert("mapinfo", null, values);
+        values.clear();
     }
 
     public static void deletePoint(Context context, int plan, int point) {
@@ -64,4 +67,20 @@ public class SQLUtils {
         return id;
     }
 
+
+    public  static int getpointNumber(Context context,int plan){
+        int i=0;
+        SQLiteDatabase db = getSQLiteDatabase(context);
+        ContentValues values = new ContentValues();
+        // 根据时间查询数据
+        Cursor cursor = db.query("mapinfo", null,"plan=?" , new String[]{plan + ""},
+                null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                i++;
+            }while (cursor.moveToNext());
+            cursor.close();
+        }
+        return i;
+    }
 }
