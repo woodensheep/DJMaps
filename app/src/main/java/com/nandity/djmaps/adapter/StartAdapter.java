@@ -76,9 +76,6 @@ public class StartAdapter extends BaseAdapter {
         convertView.setTag(R.id.tag_second,map.get("plan"));
         //返回视图，这里的视图是一整个列表项的视图
         return convertView;
-
-
-
     }
 
     class ViewHolder
