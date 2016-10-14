@@ -16,6 +16,13 @@
         map:cameraZoom="13"
         tools:context=".activity.MapsActivity" />
 
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="手动添加点开关"
+        android:id="@+id/st_add"
+        android:checked="false" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

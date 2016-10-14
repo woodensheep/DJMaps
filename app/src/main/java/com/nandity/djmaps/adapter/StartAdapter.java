@@ -58,32 +58,24 @@ public class StartAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
-        //提高对对象的复用
-        View view = null;
-        if(convertView!=null)
-        {
-            view = convertView;
-        }
-        else
-        {
-            view = LayoutInflater.from(context).inflate(resourceId, parent,false);
-        }
-
-        ViewHolder holder = (ViewHolder) view.getTag();
-        if(holder==null)
-        {
+        HashMap<String, Object> map = list.get(position);
+        ViewHolder holder;
+        if (convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(context);
+            convertView = inflater.inflate(resourceId, null);
             holder = new ViewHolder();
-            holder.textView = (TextView) view.findViewById(R.id.id_textview);
-            holder.image = (ImageView) view.findViewById(R.id.id_image);
-            view.setTag(holder);
+            holder.textView = (TextView) convertView.findViewById(R.id.id_textview);
+            holder.image = (ImageView) convertView.findViewById(R.id.id_image);
+            convertView.setTag(R.id.tag_first,holder);
+            convertView.setTag(R.id.tag_second,map.get("plan"));
         }
+        holder = (ViewHolder) convertView.getTag(R.id.tag_first);
         //给相应位置的图片和文字赋内容
-        holder.textView.setText(list.get(position).get("text").toString());
-        holder.image.setImageResource((Integer) list.get(position).get("image"));
-
+        holder.textView.setText(map.get("title").toString());
+        holder.image.setImageResource((Integer)map.get("image"));
+        convertView.setTag(R.id.tag_second,map.get("plan"));
         //返回视图，这里的视图是一整个列表项的视图
-        return view;
+        return convertView;
 
 
     }

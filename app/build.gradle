@@ -27,4 +27,5 @@ dependencies {
     compile 'com.orhanobut:logger:1.10'
     compile 'com.borjabravo:readmoretextview:2.0.1'
     compile 'com.google.android.gms:play-services-appindexing:9.6.0'
+    compile 'com.squareup.okhttp:okhttp:2.7.0'
 }

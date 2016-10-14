@@ -8,6 +8,10 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
 /**
  * Created by lemon on 2016/10/12.
  */
@@ -32,11 +36,16 @@ public class SQLUtils {
         values.clear();
     }
 
-    public static void deletePoint(Context context, int plan, int point) {
+    public static void deletePoint(Context context, int plan) {
+        SQLiteDatabase db = getSQLiteDatabase(context);
+        db.delete("mapinfo", "plan= ?", new String[]{plan + ""});
+    }
+
+    public static void deletePoint(Context context, int plan,int point) {
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
-        int id =getID(context,plan,point);
-        db.delete("mapinfo", "id = ?", new String[]{id+""});
+        int i=getID(context,plan);
+        db.delete("mapinfo", "plan<= ?", new String[]{i + ""});
     }
 
     public static void updatePoint(Context context, int plan, int point, String lo, String la) {
@@ -44,43 +53,85 @@ public class SQLUtils {
         ContentValues values = new ContentValues();
         values.put("lo", lo);
         values.put("la", la);
-        int id =getID(context,plan,point);
-        db.update("mapinfo", values, "id = ?", new String[]{id+""});
+        int id = getID(context, plan);
+        db.update("mapinfo", values, "id = ?", new String[]{id + ""});
     }
 
 
-    public static int getID(Context context, int plan, int point) {
+    public static int getID(Context context, int plan) {
         int id = 0;
         SQLiteDatabase db = getSQLiteDatabase(context);
         ContentValues values = new ContentValues();
-        // 根据时间查询数据
         Cursor cursor = db.query("mapinfo", null, "plan=?", new String[]{plan + ""},
                 null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
-            int point1 = cursor.getInt(cursor.getColumnIndex("point"));
-            while (cursor != null && point1 != point) {
-                cursor.moveToNext();
-            }
-            id = cursor.getInt(cursor.getColumnIndex("id"));
+            do {
+                id++;
+            } while (cursor.moveToNext());
             cursor.close();
         }
         return id;
     }
 
 
-    public  static int getpointNumber(Context context,int plan){
-        int i=0;
+    public static List<Integer> getpoint(Context context, int plan) {
+        int a=0;
+        List<Integer> list1=new ArrayList<>();
         SQLiteDatabase db = getSQLiteDatabase(context);
-        ContentValues values = new ContentValues();
         // 根据时间查询数据
-        Cursor cursor = db.query("mapinfo", null,"plan=?" , new String[]{plan + ""},
+        Cursor cursor = db.query("mapinfo", null, "plan=?", new String[]{plan + ""},
                 null, null, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
-                i++;
-            }while (cursor.moveToNext());
+                a = Integer.parseInt(cursor.getString(cursor.getColumnIndex("point")));
+                list1.add(a);
+            } while (cursor.moveToNext());
             cursor.close();
         }
-        return i;
+        removeDuplicate(list1);
+        return list1;
     }
+
+    public static int getplanNumber(Context context) {
+        List<Integer> list1=new ArrayList<>();
+        int a=0;
+        SQLiteDatabase db = getSQLiteDatabase(context);
+        // 根据时间查询数据
+        Cursor cursor = db.query("mapinfo", null, null, null,
+                null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                a = Integer.parseInt(cursor.getString(cursor.getColumnIndex("plan")));
+                list1.add(a);
+            } while(cursor.moveToNext());
+            cursor.close();
+        }
+        removeDuplicate(list1);
+        return list1.size();
+    }
+
+    public static List<Integer> getplans(Context context) {
+        List<Integer> list1=new ArrayList<>();
+        int a=0;
+        SQLiteDatabase db = getSQLiteDatabase(context);
+        // 根据时间查询数据
+        Cursor cursor = db.query("mapinfo", null, null, null,
+                null, null, null);
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                a = Integer.parseInt(cursor.getString(cursor.getColumnIndex("plan")));
+                list1.add(a);
+            } while(cursor.moveToNext());
+            cursor.close();
+        }
+        return removeDuplicate(list1);
+    }
+
+    public   static   List  removeDuplicate(List list)   {
+        HashSet h  =   new  HashSet(list);
+        list.clear();
+        list.addAll(h);
+        return list;
+    }
+
 }

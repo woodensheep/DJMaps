@@ -12,9 +12,17 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.nandity.djmaps.activity.StartActivity">
     <Button
+        android:background="@mipmap/icon_addpic_unfocused"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="newBtn"/>
+        android:layout_gravity="right"
+        android:id="@+id/ivb_addplan" />
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"></TableRow>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

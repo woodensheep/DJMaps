@@ -12,7 +12,8 @@ import java.util.List;
 public class MapApplication extends Application{
     private static MapApplication instance;
     private List<Activity> activityList = new LinkedList<Activity>();
-    private  int plan=1;
+    //private List<>
+    private  int plan=0;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -41,10 +42,10 @@ public class MapApplication extends Application{
     }
 
     public  void addPlan(){
-        //plan++;
+        plan++;
     }
     public  void removePlan(){
-        //plan--;
+        plan--;
     }
     public  int getPlanNumber(){
         return plan;
