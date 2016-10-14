@@ -78,6 +78,7 @@ public class StartAdapter extends BaseAdapter {
         return convertView;
 
 
+
     }
 
     class ViewHolder
